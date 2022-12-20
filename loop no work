@@ -1,0 +1,34 @@
+#include <SoftwareSerial.h>
+#include <DFRobotDFPlayerMini.h>
+
+SoftwareSerial mySoftwareSerial(3, 4); // RX, TX
+DFRobotDFPlayerMini myDFPlayer;
+
+int buttonPin = 2; // button connected to pin 2
+int buttonState = 0; // variable to store the button state
+
+void setup() {
+  // put your setup code here, to run once:
+  mySoftwareSerial.begin(9600);
+  Serial.begin(9600);
+  
+  pinMode(buttonPin, INPUT_PULLUP); // set button pin as an input with a pull-up resistor
+
+  myDFPlayer.begin(mySoftwareSerial); // start communication with DFPlayer
+  myDFPlayer.volume(30); 
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  buttonState = digitalRead(buttonPin); // read the state of the button
+  if (buttonState == LOW) { // button is pressed
+    int totalFiles = myDFPlayer.readFileCounts(); // get the total number of files in the DFPlayer
+    int randomFile = random(1, totalFiles + 1); // generate a random number between 1 and the total number of files
+    myDFPlayer.play(randomFile); // play a random file
+    while (buttonState == LOW) { // keep playing the file as long as the button is pressed
+      buttonState = digitalRead(buttonPin); // read the state of the button
+  
+    }
+  }
+}
+
